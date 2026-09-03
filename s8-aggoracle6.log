@@ -1,0 +1,34 @@
+═══ [1] getLastFinalizedGER — source LENGKAP ═══════
+// getLastFinalizedGER tries to return a finalised GER:
+// If targetBlockNum != 0: it will try to fetch it until the given block
+// Else it will ask the L1 client for the latest finalised block and use that.
+// If it fails to get the GER from the syncer, it will return the block number that used to query
+func (a *AggOracle) getLastFinalizedGER(ctx context.Context, targetBlockNum uint64) (uint64, common.Hash, error) {
+	if targetBlockNum == 0 {
+		header, err := a.l1Client.HeaderByNumber(ctx, a.blockFinality)
+		if err != nil {
+			return 0, common.Hash{}, err
+		}
+		targetBlockNum = header.Number.Uint64()
+	}
+
+	info, err := a.l1Info.GetLatestInfoUntilBlock(ctx, targetBlockNum)
+	if err != nil {
+		return targetBlockNum, common.Hash{}, err
+	}
+
+	return 0, info.GlobalExitRoot, nil
+}
+
+═══ [2] verifikasi config patch menempel? ═══════
+[AggOracle]
+TargetChainType = "EVM"
+WaitPeriodNextGER = "10s"
+
+[AggOracle.EVMSender]
+GlobalExitRootL2Addr = "0xc6e7df5e7b4f2a278906862b61205850344d4e7d"
+
+═══ [3] dari mana getLastFinalizedBlock dapat finalized ═══════
+
+═══ [4] sanity: geth kita dukung finalized tag? ═══════
+Error: server returned an error response: error code -32000: finalized block not found

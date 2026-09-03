@@ -1,0 +1,128 @@
+[Common]
+IsValidiumMode = false
+ContractVersions = "banana"
+
+[L1Config]
+chainId = 1337
+polTokenAddress = "0x0000000000000000000000000000000000000000"
+polygonZkEVMAddress = "0x70e0ba845a1a0f2da3359c97e0285013525ffc49"
+polygonRollupManagerAddress = "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+polygonZkEVMGlobalExitRootAddress = "0x95401dc811bb5740090279ba06cfa8fcf6113778"
+
+[AggSender]
+StoragePath = "/app/data/aggsender.db"
+AggLayerURL = "http://agglayer:9090"
+AggsenderPrivateKey = {Path = "/app/keystore/aggsender.keystore", Password = "testonly"}
+URLRPCL2 = "http://l2:8545"
+BlockFinality = "LatestBlock"
+EpochNotificationPercentage = 0
+SaveCertificatesToFilesPath = "/app/data/certs"
+MaxRetriesStoreCertificate = 5
+DelayBeetweenRetries = "5s"
+KeepCertificatesHistory = false
+MaxCertSize = 0
+BridgeMetadataAsHash = false
+DryRun = false
+EnableRPC = true
+
+[BridgeL2Sync]
+DBPath = "/app/data/bridgesync-l2.db"
+BlockFinality = "LatestBlock"
+InitialBlockNum = 0
+BridgeAddr = "0x4ed7c70f96b99c776995fb64377f0d4ab3b0e1c1"
+SyncBlockChunkSize = 100
+RetryAfterErrorPeriod = "5s"
+MaxRetryAttemptsAfterError = 5
+WaitForNewBlocksPeriod = "1s"
+OriginNetwork = 0
+SyncFullClaims = true
+
+[BridgeL1Sync]
+DBPath = "/app/data/bridgesync-l1.db"
+BlockFinality = "LatestBlock"
+InitialBlockNum = 0
+BridgeAddr = "0x70e0ba845a1a0f2da3359c97e0285013525ffc49"
+SyncBlockChunkSize = 100
+RetryAfterErrorPeriod = "5s"
+MaxRetryAttemptsAfterError = 5
+WaitForNewBlocksPeriod = "1s"
+OriginNetwork = 1
+SyncFullClaims = false
+
+[L1InfoTreeSync]
+DBPath = "/app/data/l1infotreesync.db"
+GlobalExitRootAddr = "0x95401dc811bb5740090279ba06cfa8fcf6113778"
+RollupManagerAddr = "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+SyncBlockChunkSize = 100
+BlockFinality = "LatestBlock"
+URLRPCL1 = "http://l1:8545"
+WaitForNewBlocksPeriod = "1s"
+InitialBlock = 0
+RetryAfterErrorPeriod = "5s"
+MaxRetryAttemptsAfterError = 5
+
+[ReorgDetectorL1]
+DBPath = "/app/data/reorgdetector-l1.db"
+URLRPCL1 = "http://l1:8545"
+BlockFinality = "LatestBlock"
+WaitPeriodBlocks = "1s"
+
+[ReorgDetectorL2]
+DBPath = "/app/data/reorgdetector-l2.db"
+URLRPCL2 = "http://l2:8545"
+BlockFinality = "LatestBlock"
+WaitPeriodBlocks = "1s"
+
+[Aggregator]
+ChainID = 2741
+Host = "0.0.0.0"
+Port = 50081
+RetryTime = "5s"
+VerifyProofInterval = "10s"
+TxProfitabilityCheckerType = "acceptall"
+SenderAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+AggLayerTxTimeout = "5m"
+AggLayerURL = "http://agglayer:9090"
+RPCURL = "http://l2:8545"
+WitnessURL = "http://l2:8545"
+SettlementBackend = "l1"
+
+[Etherman]
+URL = "http://l1:8545"
+L1ChainID = 1337
+
+[Log]
+Environment = "development"
+Level = "info"
+Outputs = ["stderr"]
+
+[AggOracle]
+BlockFinality = "LatestBlock"
+TargetChainType = "EVM"
+WaitPeriodNextGER = "10s"
+
+[AggOracle.EVMSender]
+GlobalExitRootL2Addr = "0xc6e7df5e7b4f2a278906862b61205850344d4e7d"
+SenderAddr = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+GasOffset = 0
+WaitPeriodMonitorTx = "5s"
+
+[AggOracle.EVMSender.EthTxManager]
+FrequencyToMonitorTxs = "1s"
+WaitTxToBeMined = "2m"
+GetReceiptMaxTime = "250ms"
+GetReceiptWaitInterval = "1s"
+PrivateKeys = [{Path = "/app/keystore/aggoracle.keystore", Password = "testonly"}]
+ForcedGas = 0
+GasPriceMarginFactor = 1
+MaxGasPriceLimit = 0
+StoragePath = "/app/data/ethtxmanager.db"
+ReadPendingL1Txs = false
+SafeStatusL1NumberOfBlocks = 0
+FinalizedStatusL1NumberOfBlocks = 0
+
+[AggOracle.EVMSender.EthTxManager.Etherman]
+URL = "http://l2:8545"
+MultiGasProvider = false
+L1ChainID = 2741
+HTTPHeaders = []

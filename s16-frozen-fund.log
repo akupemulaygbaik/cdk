@@ -1,0 +1,22 @@
+═══ [1] KORBAN: withdrawal L2→L1 SETELAH poisoning (tx harus SUKSES) ═══════
+withdrawal tx: {"status":"0x1","gasUsed":"0x2e401","logs":2}
+  → status 0x1 = dana KELUAR dari user di L2 (BridgeEvent leaf-4)
+
+balance korban di L2 SETELAH withdrawal (dana sudah keluar):
+99999996999999819348536
+
+GER L2 root (leaf-4 masuk pohon — tapi tidak akan pernah settle):
+0x1020e55f0dda1cbeabb4f3f00934d6057b35f498c99ce9943ae63c85ff891719
+
+═══ [2] 90s kemudian — exit leaf-4 TIDAK PERNAH masuk certificate ═══════
+2026-08-22T19:58:01.014Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 19439, numBridges: 3, numClaims: 1, createdAt: 1787428681 estimatedSize=8720	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:58:01.014Z	[31mERROR[0m	aggsender/aggsender.go:160	error building certificate: error getting imported bridge exits: error getting info by global exit root: not found	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:58:06.621Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 19444, numBridges: 3, numClaims: 1, createdAt: 1787428686 estimatedSize=8720	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:58:06.621Z	[31mERROR[0m	aggsender/aggsender.go:160	error building certificate: error getting imported bridge exits: error getting info by global exit root: not found	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:58:12.626Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 19450, numBridges: 3, numClaims: 1, createdAt: 1787428692 estimatedSize=8720	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:58:12.626Z	[31mERROR[0m	aggsender/aggsender.go:160	error building certificate: error getting imported bridge exits: error getting info by global exit root: not found	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+
+═══ interpretasi ═══════
+numBridges akan naik 3→4 (exit korban terlihat bridgesync)
+ERROR tetap → certificate tetap tak terbangun → exit korban FROZEN
+Dana korban: keluar dari L2 (balance turun), tak bisa diclaim di L1, tak bisa dikembalikan

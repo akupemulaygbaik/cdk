@@ -1,0 +1,8 @@
+═══ [1] temukan tx withdrawal korban di block sekitar 19:56-19:58 ═══════
+head: 20048
+
+═══ [2] balance korban SEBELUM withdrawal (archive call — block sebelum tx) ═══════
+→ setelah [1] keluar, jalankan:
+  cast balance 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --block <BLK_BEF> --rpc-url http://localhost:8547
+  cast balance 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --block <BLK_AFT> --rpc-url http://localhost:8547
+  cast balance 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --rpc-url http://localhost:8547   ← sekarang (sudah di s16: 99999996999999819348536)

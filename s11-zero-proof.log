@@ -1,0 +1,14 @@
+═══ [1] hitung leafValue → LER_src → R (python, zero-hash proofs) ═══════
+LEAFVALUE=0x849048cd1894242ce822697771f4e43c0040fd87913511fc2b706aa8e9c25b26
+LER_SRC=0xc99d24793e0da3e0c48adeb2ff896871dc2dce8c08609309f92877b23205a503
+R_ROLLUP=0x2a8b9459965ea87ae071e20f90b0dd1acf0816a4c2fe05ed05173bb3248394b3
+MER saat ini: 0x335e4fc6fd9b5a7c4bfc74087edf042ec898fee3537e20d5355ddf3c6cc6853f
+
+═══ [2] RM-call updateExitRoot(R) → map entry keccak(MER, R) ═══════
+updateExitRoot: {"status":"0x1","gasUsed":"0x1afb8"}
+GER hash keccak(MER, R): 0x4807f1c99c80130641d9242424668c5006b947048e75fb11284d90fc355e6e81
+map: 96980382599051024532798461511112375539752545660157788693095985062946872423616 [9.698e76]
+
+═══ [3] SIMULATE klaim rollup-flag — dua proof zero-hashes ═══════
+    │   └─ ← [Revert] custom error 0xe0417cec
+    └─ ← [Revert] custom error 0xe0417cec

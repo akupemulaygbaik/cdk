@@ -1,0 +1,67 @@
+═══ [1] fatal message PERSIS (baris FATAL lengkap) ═══════
+2026-08-22T18:31:12.142Z	[31mFATAL[0m	cmd/run.go:345	unable to open database file: no such file or directory
+
+═══ [2] section config aggoracle yang dibaca ═══════
+
+═══ [3] source createAggoracle — apa yang dibutuhkan ═══════
+			txBuilder = txbuilder.NewTxBuilderBananaZKEVM(
+				logger,
+				ethman.Contracts.Banana.Rollup,
+				ethman.Contracts.Banana.GlobalExitRoot,
+				*auth,
+				cfg.SequenceSender.MaxTxSizeForL1,
+				l1InfoTreeSync,
+				l1Client,
+				blockFinality,
+			)
+		}
+	case contracts.VersionElderberry:
+		if cfg.Common.IsValidiumMode {
+			txBuilder = txbuilder.NewTxBuilderElderberryValidium(
+				logger, ethman.Contracts.Elderberry.Rollup, da, *auth, cfg.SequenceSender.MaxBatchesForL1,
+			)
+		} else {
+			txBuilder = txbuilder.NewTxBuilderElderberryZKEVM(
+				logger, ethman.Contracts.Elderberry.Rollup, *auth, cfg.SequenceSender.MaxTxSizeForL1,
+			)
+		}
+	default:
+		err = fmt.Errorf("unknown contract version: %s", cfg.Common.ContractVersions)
+	}
+
+	return txBuilder, err
+}
+
+func createAggoracle(
+	cfg config.Config,
+	l1Client,
+	l2Client *ethclient.Client,
+	syncer *l1infotreesync.L1InfoTreeSync,
+) *aggoracle.AggOracle {
+	logger := log.WithFields("module", cdkcommon.AGGORACLE)
+	var sender aggoracle.ChainSender
+	switch cfg.AggOracle.TargetChainType {
+	case aggoracle.EVMChain:
+		cfg.AggOracle.EVMSender.EthTxManager.Log = ethtxlog.Config{
+			Environment: ethtxlog.LogEnvironment(cfg.Log.Environment),
+			Level:       cfg.Log.Level,
+			Outputs:     cfg.Log.Outputs,
+		}
+		ethTxManager, err := ethtxmanager.New(cfg.AggOracle.EVMSender.EthTxManager)
+		if err != nil {
+			log.Fatal(err)
+		}
+		go ethTxManager.Start()
+		sender, err = chaingersender.NewEVMChainGERSender(
+			logger,
+			cfg.AggOracle.EVMSender.GlobalExitRootL2Addr,
+			l2Client,
+			ethTxManager,
+			cfg.AggOracle.EVMSender.GasOffset,
+			cfg.AggOracle.EVMSender.WaitPeriodMonitorTx.Duration,
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+	default:
+		log.Fatalf(

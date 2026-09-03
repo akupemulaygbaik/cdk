@@ -1,0 +1,21 @@
+═══ [1] jalankan cdk-node + aggoracle (propagasi GER L1 → L2) ═══════
+cdk-node
+364fa5400fc45a95e0fcbf51c7a8804927e69842308d844792b03f91a9085e3e
+
+═══ [2] log — aggoracle aktif? ═══════
+2026-08-22T18:28:39.816Z	[34mINFO[0m	cmd/run.go:56	Starting application	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:28:39.867Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 0	{"pid": 7, "version": "v0.1.0", "syncer": "l1infotreesync"}
+2026-08-22T18:28:39.891Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 14077	{"pid": 7, "version": "v0.1.0", "syncer": "BridgeSyncL2"}
+2026-08-22T18:28:39.892Z	[34mINFO[0m	cmd/run.go:177	Starting blockNotifier: BlockNotifierPolling: finality=LatestBlock lastBlockSeen=none	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:28:39.892Z	[34mINFO[0m	cmd/run.go:179	Starting epochNotifier: EpochNotifierPerBlock: config: {startEpochBlock=0, sizeEpoch=6, threshold=0%}	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:28:40.637Z	[31mFATAL[0m	cmd/run.go:345	signer ({Method: Config:map[password:testonly path:/app/keystore/aggoracle.keystore]}) fails to initialize. Err:signer: local[signer-0]:  Initialize failed key: signer: local[signer-0]:  initializeKey fails. Err: open /app/keystore/aggoracle.keystore: no such file or directory
+
+═══ [3] GER L2 map — hash (MER_L1, 0) masuk? ═══════
+GER hash (MER_L1, 0): 0x16efe60331f46b9a75943e7dd90ae08521a8a553f1af87a6a51635862eb4db08
+map value: 0
+
+═══ [4] jika masih 0 — aggoracle error? ═══════
+main.createAggoracle
+2026-08-22T18:28:40.637Z	[31mFATAL[0m	cmd/run.go:345	signer ({Method: Config:map[password:testonly path:/app/keystore/aggoracle.keystore]}) fails to initialize. Err:signer: local[signer-0]:  Initialize failed key: signer: local[signer-0]:  initializeKey fails. Err: open /app/keystore/aggoracle.keystore: no such file or directory
+/workspaces/cdk/cmd/run.go:345 main.createAggoracle()
+main.createAggoracle

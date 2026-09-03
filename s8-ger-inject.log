@@ -1,0 +1,23 @@
+═══ [1] patch BlockFinality DENGAN python (bukan sed) ═══════
+[AggOracle]
+BlockFinality = "LatestBlock"
+TargetChainType = "EVM"
+WaitPeriodNextGER = "10s"
+
+═══ [2] restart cdk-node ═══════
+cdk-node
+d69c4e4819b952ef644d0f2ed672dafe3091cb98ae15399b796e7994e5172c29
+
+═══ [3] aggoracle sekarang proses GER? ═══════
+main.createAggoracle
+
+═══ [4] GER L2 map ═══════
+map (MER_L1,0): 0
+
+═══ [5] jika aggoracle masih stuck — INJEKSI MANUAL (jalur production aggoracle, dieksekusi manual) ═══════
+GER aktual dari GER L1 (getLastGlobalExitRoot):
+  0x16efe60331f46b9a75943e7dd90ae08521a8a553f1af87a6a51635862eb4db08
+injeksikan GER aktual ke GER L2 (insertGlobalExitRoot):
+receipt: {"status":"0x0","gasUsed":"0x68de"}
+
+map (MER_L1,0) setelah injeksi: 0

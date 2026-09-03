@@ -1,0 +1,13 @@
+═══ [1] simulate claimAsset final — MER=0x335e, RER=0, GI=2^64 ═══════
+    │   └─ ← [Revert] custom error 0xe0417cec
+    └─ ← [Revert] custom error 0xe0417cec
+
+═══ [2] ATTACK TX FINAL — claim valid + racun LIFO dalam satu tx ═══════
+attack tx: 0xa48ffb4183c876a83e678fbf3a2ee0f12aa96e37187cade8d650df5542107bf5
+receipt: {"status":"0x0","gasUsed":"0x17684","logs":0,"topics":[]}
+masih revert — trace:
+[
+  "execution reverted",
+  "execution reverted",
+  "execution reverted"
+]

@@ -1,0 +1,30 @@
+═══ [1] fatal message PERSIS ═══════
+  waitForNewBlocksPeriod: 1s	{"pid": 7, "version": "v0.1.0", "bridge-syncer": "BridgeSyncL2"}
+2026-08-22T18:14:57.226Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 13190	{"pid": 7, "version": "v0.1.0", "syncer": "BridgeSyncL2"}
+2026-08-22T18:14:57.227Z	[31mFATAL[0m	cmd/run.go:130	cant generate config for Epoch Notifier because: newConfigEpochNotifierPerBlock: error getting clock configuration from AggLayer: Post "http://agglayer:9090": dial tcp 172.18.0.4:9090: connect: connection refused
+/workspaces/cdk/log/log.go:148 github.com/0xPolygon/cdk/log.appendStackTraceMaybeArgs()
+/workspaces/cdk/log/log.go:229 github.com/0xPolygon/cdk/log.Fatal()
+
+═══ [2] restart cdk-node (agglayer sudah Up sekarang) ═══════
+cdk-node
+b26818f7ae5571dba7972b82216de3e425e241797367f1113816401cd5e4bba8
+
+═══ [3] status + log kunci ═══════
+cdk-node	Up 50 seconds
+agglayer	Up 3 minutes
+l2	Up 3 minutes
+l1	Up 4 minutes
+2026-08-22T18:16:56.703Z	[34mINFO[0m	etherman/etherman.go:101	rollupID: 3 (obtained from contract: banana/rollupmanager@0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 )	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:16:56.709Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 0	{"pid": 7, "version": "v0.1.0", "syncer": "l1infotreesync"}
+2026-08-22T18:16:56.720Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 13190	{"pid": 7, "version": "v0.1.0", "syncer": "BridgeSyncL2"}
+2026-08-22T18:16:57.441Z	[34mINFO[0m	aggsender/aggsender.go:741	recovery: checking last certificate from AggLayer for network 3	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:16:57.441Z	[34mINFO[0m	aggsender/aggsender.go:746	recovery: last certificate from AggLayer: nil	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:16:57.442Z	[34mINFO[0m	aggsender/aggsender.go:751	recovery: last certificate in storage: nil	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:16:57.442Z	[34mINFO[0m	aggsender/aggsender.go:755	recovery: No certificates in local storage and agglayer: initial state	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:16:57.724Z	[34mINFO[0m	aggsender/aggsender.go:154	Epoch received: EpochEvent: epoch=2125 extra=ExtraInfoEventEpoch: pendingBlocks=3	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+
+═══ [4] epoch loop aktif? ═══════
+10
+2026-08-22T18:17:12.737Z	[34mINFO[0m	aggsender/aggsender.go:175	trying to send a new certificate...	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:17:12.738Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 13390, numBridges: 3, numClaims: 0, createdAt: 1787422632 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:17:18.742Z	[34mINFO[0m	aggsender/aggsender.go:175	trying to send a new certificate...	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}

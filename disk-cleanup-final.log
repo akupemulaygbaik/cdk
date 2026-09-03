@@ -1,0 +1,50 @@
+═══ [1] kondisi disk sekarang ═══════
+overlay          32G   30G  514M  99% /
+
+pemakan space terbesar (top-level):
+164M	/workspaces/cdk
+12M	/workspaces/zkevm-contracts
+
+docker:
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          3         3         6.006GB   6.006GB (100%)
+Containers      4         0         53.25kB   53.25kB (100%)
+Local Volumes   4         4         401.5MB   0B (0%)
+Build Cache     6         0         281.3MB   62.16MB
+
+═══ [2] CLEANUP #1 — docker (aman utk container running) ═══════
+Total:	281.3MB
+Total reclaimed space: 0B
+Total reclaimed space: 53.25kB
+
+═══ [3] CLEANUP #2 — build cache & artefak besar ═══════
+132K	/home/codespace/.foundry/cache
+60M	/workspaces/cdk/target
+618M	/home/codespace/.cache
+go cache cleaned
+
+═══ [4] CLEANUP #3 — zkevm-contracts (sudah tidak dibutuhkan — vendor copy ada) ═══════
+12M	/workspaces/zkevm-contracts
+zkevm-contracts dihapus
+
+═══ [5] CLEANUP #4 — artefak foundry selain yang penting ═══════
+
+═══ [6] CLEANUP #5 — log lama (yang sudah teranalisis, keep s7*) ═══════
+63
+log lama dihapus, tersisa:
+/workspaces/cdk/disk-cleanup-final.log
+/workspaces/cdk/install.log
+/workspaces/cdk/s7-attack-true-final.log
+/workspaces/cdk/s7-final.log
+/workspaces/cdk/s7-ger-check-source.log
+/workspaces/cdk/s7-l1-povproof.log
+
+═══ [7] CLEANUP #6 — pip cache + apt ═══════
+Directories removed: 0
+
+═══ [8] HASIL ═══════
+overlay          32G   20G   11G  66% /
+
+container masih hidup:
+
+proof blob intact: HILANG

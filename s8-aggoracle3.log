@@ -1,0 +1,15 @@
+═══ [1] tambah section AggOracle ke config ═══════
+config patched:
+4
+
+═══ [2] restart cdk-node ═══════
+cdk-node
+486f6cc2421d1053c4c1a311c1dc55da85fc49a601471d1a1e7551b04db59d22
+
+═══ [3] status + log ═══════
+
+═══ [4] GER L2 map — hash (MER_L1, 0) masuk? ═══════
+map: 0
+
+═══ [5] kalau masih fatal/error — pesan lengkap ═══════
+2026-08-22T18:33:54.980Z	[31mFATAL[0m	cmd/run.go:360	Unsupported chaintype evm. Supported values: [EVM]	{"pid": 7, "version": "v0.1.0"}

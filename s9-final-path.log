@@ -1,0 +1,27 @@
+═══ [1] nonce bersih + precompute bridge final (era-lama GER wiring) ═══════
+null
+BRIDGE_FUTURE=0x998abeb3E57409262aE5b751f60747921B33613E (tx: GER-old impl, GER-old proxy, GER-V2 impl, GER-V2 proxy, BR impl, BR proxy = +5)
+
+═══ [2] GER era-lama impl fresh (constructor: rollupManager=deployer, bridge=BRIDGE_FUTURE) ═══════
+step1 (placeholder proxy sebagai impl base): 0xa82ff9afd8f496c3d6ac40e2a0f282e47488cfc9
+GER_OLD_PROXY=0x1613beb3b2c4f22ee086b2b38c1476a3ce7f78e8
+code: 0x
+...
+
+═══ [3] INJEKSI GER (MER_L1, 0) via insertGlobalExitRoot — jalur AggOracle production ═══════
+GER hash target: 0x16efe60331f46b9a75943e7dd90ae08521a8a553f1af87a6a51635862eb4db08
+inject: {"status":"0x1","gasUsed":"0x5448"}
+map: Error: contract 0x1613beb3b2c4f22ee086b2b38c1476a3ce7f78e8 does not have any code
+
+═══ [4] bridge impl + proxy FINAL wiring GER_OLD_PROXY (mendarat di BRIDGE_FUTURE) ═══════
+BR_IMPL=0xf5059a5d33d5853360d16c683c16e67980206f36
+BR_FINAL=0x95401dc811bb5740090279ba06cfa8fcf6113778
+BEDA (nonce geser — cek wiring saja)
+wiring: netID=0 GER=0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8
+
+═══ [5] KLAIM DEPOSIT L1 — proof pohon L1 leaf-0, MER=0xec5c, RER=0, GI=2^64, destNet=0 ═══════
+ROOT=0xec5c3e04c531c82000dd5f47fbacabd0570d5bc2cc00367f863849d4e0aeab81
+proof: 0x849048cd1894242ce822697771f4...
+POISON_NEW=0x998abeb3e57409262ae5b751f60747921b33613e
+
+═══ [6] SIMULATE klaim deposit L1 di bridge FINAL ═══════

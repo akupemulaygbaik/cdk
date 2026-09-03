@@ -1,0 +1,8 @@
+═══ [1] source era-old GER dari vendor copy ═══════
+
+═══ [2] modifier & variable wiring di file yang sama ═══════
+28:    address public immutable bridgeAddress;
+31:     * @param _bridgeAddress PolygonZkEVMBridge contract address
+33:    constructor(address _bridgeAddress) {
+34:        bridgeAddress = _bridgeAddress;
+42:        if (msg.sender != bridgeAddress) {

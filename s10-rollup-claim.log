@@ -1,0 +1,15 @@
+═══ [1] state semua komponen klaim ═══════
+bridge netID: 0
+bridge GER manager: 0xc6e7DF5E7b4f2A278906862b61205850344D4e7d
+GER V2 mainnet: 0x335e4fc6fd9b5a7c4bfc74087edf042ec898fee3537e20d5355ddf3c6cc6853f
+GER V2 rollup: 0xec5c3e04c531c82000dd5f47fbacabd0570d5bc2cc00367f863849d4e0aeab81
+GER hash keccak(0x335e, 0xec5c): 0x79764b3549ca3ea412bad7dced2e63082d41530e0dbe3e869f88d8c0951f05d0
+map: 2096002326767140364116493846655399535649194868646709257851965064605183545189 [2.096e75]
+
+═══ [2] proof pohon L1 leaf-0 + poison deploy ke bridge V2 final ═══════
+ROOT=0xf136d21bb8cc47380e1372c95e879ae89019c276e804c421768d24f8d69472dd
+POISON=0x1291be112d480055dafd8a610b7d1e203891c274
+
+═══ [3] SIMULATE — klaim rollup-flag: GI=0 (rollup0,leaf0), MER=0x335e, RER=0xec5c ═══════
+    │   └─ ← [Revert] custom error 0xe0417cec
+    └─ ← [Revert] custom error 0xe0417cec

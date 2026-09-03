@@ -1,0 +1,26 @@
+═══ [1] saldo korban di beberapa titik sejarah (archive queries) ═══════
+Skrg (head ~20048):
+99999996999999819348536
+
+Block 19000 (sebelum withdrawal s16 ~19439):
+99999997999999820674623
+Block 19300:
+99999997999999820674623
+Block 19400:
+99999997999999820674623
+Block 19450 (setelah withdrawal):
+99999997999999820674623
+Block 19500:
+99999996999999819348536
+
+═══ [2] saldo bridge escrow di titik yang sama (dana korban tersimpan) ═══════
+Block 19000:
+2000000000000000
+Block 19450:
+2000000000000000
+Sekarang:
+3000000000000000
+
+═══ [3] cari tx withdrawal via log BridgeEvent era itu (metode ketiga) ═══════
+  blockNumber: 19460
+  transactionHash: 0x8cb5ec5fc1559940c4bdf36ac0b1cf07f4d4ce3c2d40a0b2fe24698f857347c6

@@ -1,0 +1,24 @@
+═══ [1] fix TargetChainType: evm → EVM ═══════
+TargetChainType = "EVM"
+
+═══ [2] restart cdk-node ═══════
+cdk-node
+ef45c588e4678e3a0edff96cc365cff0dab23bfabd1b45afef308da5760cf1a6
+
+═══ [3] status + log aggoracle ═══════
+cdk-node	Up 50 seconds
+2026-08-22T18:35:36.000Z	[35mDEBUG[0m	config/config_render.go:119	ResolveCycle: pending vars: [L1Config.chainId L1Config.chainId L1Config.polygonZkEVMGlobalExitRootAddress L1Config.polygonRollupManagerAddress L1Config.polygonZkEVMAddress L1Config.chainId L1Config.chainId L1Config.chainId]	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:35:36.027Z	[34mINFO[0m	l1infotreesync/downloader.go:52	sanity check GlobalExitRoot(0x95401dc811bb5740090279Ba06cfA8fcF6113778) OK. DepositCount: 2	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:35:37.058Z	[34mINFO[0m	aggsender/aggsender.go:154	Epoch received: EpochEvent: epoch=2312 extra=ExtraInfoEventEpoch: pendingBlocks=5	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:35:37.060Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 14496, numBridges: 3, numClaims: 0, createdAt: 1787423737 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:35:42.062Z	[34mINFO[0m	aggsender/aggsender.go:154	Epoch received: EpochEvent: epoch=2313 extra=ExtraInfoEventEpoch: pendingBlocks=6	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:35:42.063Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 14500, numBridges: 3, numClaims: 0, createdAt: 1787423742 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:35:47.679Z	[31mERROR[0m	aggoracle/oracle.go:115	unexpected error processing GER: finalized block not found	{"pid": 7, "version": "v0.1.0", "module": "aggoracle"}
+github.com/0xPolygon/cdk/aggoracle.(*AggOracle).handleGERProcessingError
+	/workspaces/cdk/aggoracle/oracle.go:115
+github.com/0xPolygon/cdk/aggoracle.(*AggOracle).Start
+
+═══ [4] GER L2 map ═══════
+map (MER_L1,0): 0
+
+═══ [5] fatal baru? ═══════

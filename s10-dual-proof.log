@@ -1,0 +1,20 @@
+═══ [1] data proof rollup-tree — root rollup tree GER V2 sekarang ═══════
+GER V2 getRoot (L1 info tree root): 0x4effd12eb3dc5408cc5a61c547feac79129b96119460e6858b403ae05e21716c
+GER V2 lastRollupExitRoot: 0xec5c3e04c531c82000dd5f47fbacabd0570d5bc2cc00367f863849d4e0aeab81
+→ rollupExitRoot calldata harus = ROOT rollup tree yang mengandung leaf 0xec5c
+  CATATAN: lastRollupExitRoot = 0xec5c (leaf yang kita set), TAPI rollup TREE root ≠ 0xec5c
+  rollup tree root = getRoot() dari pohon rollup internal GER V2
+
+═══ [2] hitung KEDUA proof ═══════
+# proof1 root (deposit L1 tree): 0xec5c3e04c531c82000dd5f47fbacabd0570d5bc2cc00367f863849d4e0aeab81
+# proof2 root (rollup tree): 0x0c29bf77f156442fdf1066a44722a12e954af9ae682d7fff09133730940fa352
+
+═══ [3] SIMULATE — klaim rollup-flag dgn DUA proof ═══════
+MER calldata: 0x335e4fc6fd9b5a7c4bfc74087edf042ec898fee3537e20d5355ddf3c6cc6853f (mainnet root — dari GER hash in-map)
+RER calldata: HARUS = root rollup tree (proof2 sanity di atas)
+RER rollup-tree root: 0x0c29bf77f156442fdf1066a44722a12e954af9ae682d7fff09133730940fa352
+Cek GER hash calldata: keccak(MER_CAL, RER_TREE):
+  0x33a1f0fad16b2ad988c27db2991fc595602f642b046af5abe3fd2f40ee123c79
+  map: 0
+    │   └─ ← [Revert] custom error 0x002f6fad
+    └─ ← [Revert] custom error 0x002f6fad

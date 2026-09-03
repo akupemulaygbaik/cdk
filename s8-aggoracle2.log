@@ -1,0 +1,21 @@
+═══ [1] mount aggsender.keystore JUGA sebagai aggoracle.keystore ═══════
+cdk-node
+35a67a7311c7ff0fbf6b4a3ef809d638a29672d7890efe8289c766f0fd5b79cc
+
+═══ [2] log — aggoracle jalan? ═══════
+2026-08-22T18:31:11.530Z	[34mINFO[0m	aggsender/aggsender.go:154	Epoch received: EpochEvent: epoch=2267 extra=ExtraInfoEventEpoch: pendingBlocks=1	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T18:31:11.531Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 14077, numBridges: 3, numClaims: 0, createdAt: 1787423471 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+/workspaces/cdk/log/log.go:229 github.com/0xPolygon/cdk/log.Fatal()
+
+═══ [3] GER L2 — hash (MER_L1, 0) ═══════
+map value: 0
+
+═══ [4] kalau map masih 0 — log aggoracle lengkap (apa yg disinkronkan) ═══════
+	/go/pkg/mod/github.com/0x!polygon/zkevm-ethtx-manager@v0.2.11/etherman/etherman.go:109
+github.com/0xPolygon/zkevm-ethtx-manager/ethtxmanager.init.func1
+	/go/pkg/mod/github.com/0x!polygon/zkevm-ethtx-manager@v0.2.11/ethtxmanager/ethtxmanager.go:75
+github.com/0xPolygon/zkevm-ethtx-manager/ethtxmanager.New
+	/go/pkg/mod/github.com/0x!polygon/zkevm-ethtx-manager@v0.2.11/ethtxmanager/ethtxmanager.go:80
+main.createAggoracle
+/workspaces/cdk/cmd/run.go:345 main.createAggoracle()
+main.createAggoracle

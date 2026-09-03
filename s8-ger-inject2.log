@@ -1,0 +1,31 @@
+═══ [1] trace insertGlobalExitRoot revert — kenapa ═══════
+    │   └─ ← [Revert] EvmError: Revert
+    └─ ← [Revert] EvmError: Revert
+
+═══ [2] ABI GER L2 proxy — fungsi apa saja yang ADA ═══════
+0xea2764d759b2019273078774b37fea54017a33a7588edd0b0b5ec818fbb79bb5
+3
+0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1
+
+═══ [3] JALUR updateExitRoot via RM — wiring GER L2 rollupManager siapa ═══════
+rollupManager: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+→ kalau = DEPLOYER: deployer panggil updateExitRoot → set lastROLLUPExitRoot = GER kita
+→ map akan berisi keccak(mainnet_root_L2, GER_L1) — BUKAN yang klaim butuh
+
+═══ [4] JALUR production SEJATI: bridge L1 kirim root L1 ke GER... di chain L1. GER L1 sudah
+    punya 0x16ef (MER_L1,0) in-map — VERIFIED. Yang perlu: hash INI masuk map GER L2.
+    Bridge L2 forceUpdate menghasilkan keccak(root_L2, RER) — beda.
+
+═══ [5] opsi: GER L2 era-lama (impl genesis 0xDc64) punya insertGlobalExitRoot?
+    — tapi bridge wiring ke GER V2 proxy (0xc6e7). Ganti wiring bridge = re-init = guard locked.
+
+═══ [6] test: apakah updateExitRoot via deployer (sebagai RM) berfungsi → apa yang masuk map ═══════
+updateExitRoot(MER_L1) via deployer: {"status":"0x1","gasUsed":"0x24016"}
+
+state GER L2 setelah:
+  lastRollupExitRoot: 0xec5c3e04c531c82000dd5f47fbacabd0570d5bc2cc00367f863849d4e0aeab81
+  lastMainnetExitRoot: 0x335e4fc6fd9b5a7c4bfc74087edf042ec898fee3537e20d5355ddf3c6cc6853f
+
+map (MER_L1, RER_baru):
+  hash keccak(mainnet, rollup) = 0x79764b3549ca3ea412bad7dced2e63082d41530e0dbe3e869f88d8c0951f05d0
+  map value: 2096002326767140364116493846655399535649194868646709257851965064605183545189 [2.096e75]

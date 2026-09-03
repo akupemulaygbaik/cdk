@@ -1,0 +1,7 @@
+═══ [1] status semua container ═══════
+
+═══ [2] log L2 — kenapa mati ═══════
+Error response from daemon: No such container: l2
+
+═══ [3] disk (kalau penuh, geth exit) ═══════
+overlay          32G   20G   11G  66% /

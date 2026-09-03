@@ -1,0 +1,63 @@
+prover-buffer-size = 100
+
+[full-node-rpcs]
+[l2]
+rpc-timeout = "45s"
+[proof-signers]
+[log]
+level = "info"
+outputs = []
+format = "pretty"
+
+[rpc]
+grpc-port = 9089
+readrpc-port = 9090
+admin-port = 9091
+host = "0.0.0.0"
+request-timeout = "3m"
+
+[rate-limiting]
+send-tx = "unlimited"
+
+[outbound.rpc.settle-tx]
+max-retries = 30
+retry-interval = "10s"
+confirmations = 12
+
+[outbound.rpc.settle-cert]
+max-retries = 30
+retry-interval = "10s"
+confirmations = 12
+
+[l1]
+chain-id = 1337
+node-url = "http://l1:8545/"
+ws-node-url = "ws://l1:8546/"
+connect-attempt-timeout = "3s"
+rollup-manager-contract = "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+polygon-zkevm-global-exit-root-v2-contract = "0x95401dc811bb5740090279ba06cfa8fcf6113778"
+rpc-timeout = "45s"
+event-filter-block-range = 10000
+
+[auth.local]
+private-keys = [{ path = "/keystore/agglayer.keystore", password = "testonly" }]
+
+[telemetry]
+prometheus-addr = "0.0.0.0:3000"
+
+[epoch.block-clock]
+epoch-duration = 6
+genesis-block = 0
+
+[shutdown]
+runtime-timeout = "5s"
+
+[certificate-orchestrator]
+input-backpressure-buffer-size = 1000
+
+[storage]
+db-path = "/data/agglayer"
+
+[prover.cpu-prover]
+
+[grpc]

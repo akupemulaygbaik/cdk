@@ -1,0 +1,38 @@
+═══ [1] network + container L1 ═══════
+77158e899f2f073f41edaba87c259b1b10b72b8759ba4867eb6ebbcefe65590c
+
+═══ [2] container L2 ═══════
+7cf391fe6220385f3c5ade911849e319a2e177769c20a02122e8dea08b5fca90
+
+═══ [3] tunggu verifikasi chain ═══════
+L1 chainId: 1337
+L2 chainId: 2741
+L1 block: 12596
+L2 block: 13225
+
+═══ [4] verifikasi STATE selamat (kontrak kunci) ═══════
+bridge L2 root: 0x335e4fc6fd9b5a7c4b...
+  (harus 0x335e4fc6... — pohon 3-leaf utuh)
+bridge L2 code: 0x6080604052...
+Poison code: 0x604060a081...
+
+═══ [5] agglayer ═══════
+63518272ec0e553a332e81109308d635fd1711a1f6ca6988e6dfa304cf3c2e69
+agglayer-data
+agglayer	Up 25 seconds
+
+═══ [6] cdk-node ═══════
+ad4bc7ce7fe32ff5cdf19db4195c9aaef8b9a8f5f81baa53da0f26b2291764b3
+cdk-node	Exited (1) 40 seconds ago
+agglayer	Up About a minute
+l2	Up About a minute
+l1	Up About a minute
+2026-08-22T18:14:56.930Z	[34mINFO[0m	etherman/etherman.go:101	rollupID: 3 (obtained from contract: banana/rollupmanager@0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 )	{"pid": 7, "version": "v0.1.0"}
+2026-08-22T18:14:57.043Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 0	{"pid": 7, "version": "v0.1.0", "syncer": "l1infotreesync"}
+2026-08-22T18:14:57.226Z	[34mINFO[0m	sync/evmdriver.go:84	Starting sync... lastProcessedBlock 13190	{"pid": 7, "version": "v0.1.0", "syncer": "BridgeSyncL2"}
+/workspaces/cdk/log/log.go:229 github.com/0xPolygon/cdk/log.Fatal()
+
+═══ [7] status final semua ═══════
+agglayer	Up About a minute
+l2	Up About a minute
+l1	Up About a minute

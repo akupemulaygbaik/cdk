@@ -1,0 +1,48 @@
+═══ [1] cek config.go aggoracle — field finality ═══════
+21:	// BlockFinality indicates the status of the blocks that will be queried in order to sync
+22:	BlockFinality     string                   `jsonschema:"enum=LatestBlock, enum=SafeBlock, enum=PendingBlock, enum=FinalizedBlock, enum=EarliestBlock" mapstructure:"BlockFinality"` //nolint:lll
+
+═══ [2] cek source oracle.go — di mana finalized dipakai ═══════
+74-	}
+75-}
+76-
+77:// processLatestGER fetches the latest finalized GER, checks if it is already injected and injects it if not
+78-func (a *AggOracle) processLatestGER(ctx context.Context, blockNumToFetch *uint64) error {
+79-	// Fetch the latest GER
+80:	blockNum, gerToInject, err := a.getLastFinalizedGER(ctx, *blockNumToFetch)
+81-	if err != nil {
+82-		return err
+83-	}
+84-
+85-	// Update the block number for the next iteration
+--
+116-	}
+117-}
+118-
+119:// getLastFinalizedGER tries to return a finalised GER:
+120-// If targetBlockNum != 0: it will try to fetch it until the given block
+121-// Else it will ask the L1 client for the latest finalised block and use that.
+122-// If it fails to get the GER from the syncer, it will return the block number that used to query
+
+═══ [3] patch config — BlockFinality utk aggoracle (kalau field ada) ═══════
+[AggOracle]
+TargetChainType = "EVM"
+WaitPeriodNextGER = "10s"
+
+
+═══ [4] restart + verifikasi ═══════
+cdk-node
+55ff9234a7d80476d7a6098b5499fdfe93f8e08abef64f10386be6673855dfc8
+cdk-node	Up 50 seconds
+--- aggoracle log ---
+	/workspaces/cdk/aggoracle/oracle.go:68
+2026-08-22T18:38:09.855Z	[31mERROR[0m	aggoracle/oracle.go:115	unexpected error processing GER: finalized block not found	{"pid": 7, "version": "v0.1.0", "module": "aggoracle"}
+github.com/0xPolygon/cdk/aggoracle.(*AggOracle).handleGERProcessingError
+	/workspaces/cdk/aggoracle/oracle.go:115
+github.com/0xPolygon/cdk/aggoracle.(*AggOracle).Start
+	/workspaces/cdk/aggoracle/oracle.go:68
+
+═══ [5] GER L2 map ═══════
+map (MER_L1,0): 0
+GER L2 insertGlobalExitRoot events:
+0

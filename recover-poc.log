@@ -1,0 +1,66 @@
+════════════════════════════════════════════════════════
+  MENCARI JEJAK POC YANG HILANG (FULL DUMP)
+════════════════════════════════════════════════════════
+
+[1] Memaksa History dari RAM ke Disk...
+
+[2] Dump 200 Baris History Terakhir (TANPA FILTER)...
+{ echo "════════════════════════════════════════════════════════"; echo "  MENCARI JEJAK POC YANG HILANG"; echo "════════════════════════════════════════════════════════";  echo -e "\n[1] Mengecek Terminal History (~/.bash_history / ~/.zsh_history)..."; grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" ~/.bash_history 2>/dev/null; grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" ~/.zsh_history 2>/dev/null; sudo grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" /root/.bash_history 2>/dev/null;  echo -e "\n[2] Mengecek Docker Images yang Pernah Dibuat (di luar image kurtosis/geth)..."; docker images --format "{{.Repository}}:{{.Tag}} - Dibuat: {{.CreatedAt}}" 2>/dev/null | grep -v -iE "kurtosis|ethereum/client-go|postgres|agglayer|toolbox";  echo -e "\n[3] Mengecek Container yang Pernah Berjalan (termasuk yang mati)..."; docker ps -a --format "Container: {{.Names}} | Image: {{.Image}} | Status: {{.Status}}" 2>/dev/null | grep -v -iE "kurtosis";  echo -e "\n[4] Mencari File .sh atau .yml PoC di Folder /workspaces..."; find /workspaces -type f \( -name "docker-compose*.yml" -o -name "poc*.yml" -o -name "poc*.sh" -o -name "init-l1.sh" \) -mtime -30 2>/dev/null;  echo -e "\n[5] Mengecek VS Code Local History (Mencari file yang mengandung keyword racun)..."
+grep -rl -iE "poison|claim-calldata|cdk-node|init-l1" ~/.vscode-remote/data/User/History/ 2>/dev/null | head -10;  echo -e "\n════════════════════════════════════════════════════════"; echo "  Pencarian Selesai. Cek output di atas atau buka file: recover-poc.log"; echo "════════════════════════════════════════════════════════"; } 2>&1 | tee recover-poc.log
+docker system prune -a --volumes -f
+{ echo "════════════════════════════════════════════════════════"; echo "  MENCARI JEJAK POC YANG HILANG"; echo "════════════════════════════════════════════════════════";  echo -e "\n[1] Mengecek Terminal History (~/.bash_history / ~/.zsh_history)..."; grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" ~/.bash_history 2>/dev/null; grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" ~/.zsh_history 2>/dev/null; sudo grep -iE "docker|poc|cast|poison|bridge|compose|init-l1" /root/.bash_history 2>/dev/null;  echo -e "\n[2] Mengecek Docker Images yang Pernah Dibuat (di luar image kurtosis/geth)..."; docker images --format "{{.Repository}}:{{.Tag}} - Dibuat: {{.CreatedAt}}" 2>/dev/null | grep -v -iE "kurtosis|ethereum/client-go|postgres|agglayer|toolbox";  echo -e "\n[3] Mengecek Container yang Pernah Berjalan (termasuk yang mati)..."; docker ps -a --format "Container: {{.Names}} | Image: {{.Image}} | Status: {{.Status}}" 2>/dev/null | grep -v -iE "kurtosis";  echo -e "\n[4] Mencari File .sh atau .yml PoC di Folder /workspaces..."; find /workspaces -type f \( -name "docker-compose*.yml" -o -name "poc*.yml" -o -name "poc*.sh" -o -name "init-l1.sh" \) -mtime -30 2>/dev/null;  echo -e "\n[5] Mengecek VS Code Local History (Mencari file yang mengandung keyword racun)..."
+grep -rl -iE "poison|claim-calldata|cdk-node|init-l1" ~/.vscode-remote/data/User/History/ 2>/dev/null | head -10;  echo -e "\n════════════════════════════════════════════════════════"; echo "  Pencarian Selesai. Cek output di atas atau buka file: recover-poc.log"; echo "════════════════════════════════════════════════════════"; } 2>&1 | tee recover-poc.log
+# 1. Paksa history dari RAM ditulis ke file
+history -a
+sync
+echo "════════════════════════════════════════════════════════"
+echo "  DUMP 100 BARIS HISTORY TERAKHIR (TANPA FILTER)"
+echo "════════════════════════════════════════════════════════"
+# 2. Dump isi history (Zsh biasanya pakai fc -l, Bash pakai history)
+if [ -f ~/.zsh_history ]; then     tail -n 100 ~/.zsh_history; elif [ -f ~/.bash_history ]; then     tail -n 100 ~/.bash_history; else
+    history 100; fi
+echo "════════════════════════════════════════════════════════"
+{ echo "════════════════════════════════════════════════════════"; echo "  MENCARI JEJAK POC YANG HILANG (FULL DUMP)"; echo "════════════════════════════════════════════════════════";  echo -e "\n[1] Memaksa History dari RAM ke Disk..."; history -a; sync;  echo -e "\n[2] Dump 200 Baris History Terakhir (TANPA FILTER)..."; if [ -f ~/.zsh_history ]; then     tail -n 200 ~/.zsh_history; elif [ -f ~/.bash_history ]; then     tail -n 200 ~/.bash_history; else     history 200; fi;  echo -e "\n[3] Mengecek Semua Docker Images..."; docker images --format "{{.Repository}}:{{.Tag}} - Dibuat: {{.CreatedAt}}" 2>/dev/null;  echo -e "\n[4] Mengecek Semua Container (Termasuk yang mati)..."; docker ps -a --format "Container: {{.Names}} | Image: {{.Image}} | Status: {{.Status}}" 2>/dev/null;  echo -e "\n[5] Mencari File Script (.sh / .yml / .toml) di /workspaces..."; find /workspaces -type f \( -name "*.sh" -o -name "docker-compose*.yml" -o -name "poc*.yml" \) -mtime -30 2>/dev/null | grep -v -iE "node_modules|\.git|kurtosis-cdk/templates" | head -30;  echo -e "\n[6] Cek Sisa Disk..."; df -h / | tail -1;  echo -e "\n════════════════════════════════════════════════════════"; echo "  Pencarian Selesai. Cek output di atas atau buka file: recover-poc.log"; echo "════════════════════════════════════════════════════════"; } 2>&1 | tee recover-poc.log
+
+[3] Mengecek Semua Docker Images...
+
+[4] Mengecek Semua Container (Termasuk yang mati)...
+
+[5] Mencari File Script (.sh / .yml / .toml) di /workspaces...
+/workspaces/cdk/bridgesync/docker-compose.yml
+/workspaces/cdk/build/docker-compose.yml
+/workspaces/cdk/test/contracts/bind.sh
+/workspaces/cdk/test/contracts/compile.sh
+/workspaces/cdk/test/run-e2e.sh
+/workspaces/cdk/test/run-e2e-multi_pp.sh
+/workspaces/cdk/test/poison/test_helper/bats-assert/install.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/prepack.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/prepare.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/checks/generation.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/upgradeable/transpile-onto.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/upgradeable/transpile.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/upgradeable/patch-save.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/upgradeable/patch-apply.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/version.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/workflow/publish.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/workflow/integrity-check.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/workflow/start.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/workflow/pack.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/release/workflow/exit-prerelease.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/git-user-config.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/prepare-contracts-package.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts-upgradeable/scripts/prepare-docs.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/prepack.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/checks/generation.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/upgradeable/transpile-onto.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/upgradeable/transpile.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/upgradeable/patch-save.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/upgradeable/patch-apply.sh
+/workspaces/cdk/test/poison/lib/openzeppelin-contracts/scripts/release/version.sh
+
+[6] Cek Sisa Disk...
+overlay          32G   14G   17G  45% /
+
+════════════════════════════════════════════════════════
+  Pencarian Selesai. Cek output di atas atau buka file: recover-poc.log
+════════════════════════════════════════════════════════

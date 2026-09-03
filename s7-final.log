@@ -1,0 +1,9 @@
+═══ [1] simulate claimAsset final — MER=0x335e, RER=0, GI=2^64 ═══════
+
+═══ [2] jika simulate SUKSES — ATTACK TX FINAL ═══════
+simulate masih revert: Error: error sending request for url (http://localhost:8547/)
+
+Context:
+- Error #0: client error (Connect)
+- Error #1: tcp connect error
+- Error #2: Connection refused (os error 111)

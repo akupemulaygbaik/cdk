@@ -1,0 +1,65 @@
+═══ [1] GER L2 wiring: siapa bridgeAddress & rollupManager ═══════
+bridge: 0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1
+rollupManager: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+
+═══ [2] jalur injeksi mainnet: updateExitRoot DARI bridge (caller=bridgeAddress) ═══════
+GER L2 bridgeAddress wiring = siapa? Kalau = BRIDGE_L2_PROXY → jalur: deposit L2 forceUpdate
+akan set lastMainnetExitRoot=root-pohon-L2 — BUKAN MER_L1.
+Yang klaim butuh: globalExitRootMap[keccak(MER_L1, RER)] ≠ 0
+
+Dari source GER V2 (ronde sebelumnya): mainnet root diset oleh caller bridge.
+→ deposit L2 forceUpdate mengubah mainnet → keccak(MER_L2_root, RER) yang masuk map.
+→ untuk (MER_L1, 0) masuk map: harus ADA momen mainnet==MER_L1 & rollup==0.
+   MER_L1 masuk hanya via bridge L2 menerima root L1 — tidak pernah terjadi di devnet.
+
+=== JALUR REAlISTIS: RM path (caller=rollupManager=DEPLOYER) set ROLLUP root ===
+kalau RER diset = MER_L1 → GER hash jadi keccak(mainnetL2_root, MER_L1) ≠ target
+→ TIDAK membantu utk (MER_L1, 0).
+
+=== KESIMPULAN YANG HARUS DIVERIFIKASI: GER hash yg klaim cek ===
+Cek source claim utk mainnet-flag: GER yg diverifikasi = keccak(MER,RER) dari CALldata klaim
+760-        bytes32 leafValue
+761-    ) internal {
+762-        // Check blockhash where the global exit root was set
+763-        // Note that previusly timestamps were setted, since in only checked if != 0 it's ok
+764-        uint256 blockHashGlobalExitRoot = globalExitRootManager
+765:            .globalExitRootMap(
+766-                GlobalExitRootLib.calculateGlobalExitRoot(
+767-                    mainnetExitRoot,
+768-                    rollupExitRoot
+769-                )
+770-            );
+771-
+772-        // check that this global exit root exist
+773-        if (blockHashGlobalExitRoot == 0) {
+774:            revert GlobalExitRootInvalid();
+775-        }
+776-
+777-        uint32 leafIndex;
+778-        uint32 sourceBridgeNetwork;
+779-
+780-        // Get origin network from global index
+781-        if (globalIndex & _GLOBAL_INDEX_MAINNET_FLAG != 0) {
+782-            // the network is mainnet, therefore sourceBridgeNetwork is 0
+783-
+784-            // Last 32 bits are leafIndex
+785-            leafIndex = uint32(globalIndex);
+786-
+787-            if (
+788-                !verifyMerkleProof(
+789-                    leafValue,
+
+═══ [3] simulate klaim dgn skenario: GER map BERISI hash klaim ═══════
+jika klaim verify keccak(MER,RER) dari calldata DAN map harus ≠ 0:
+dengan MER=MER_L1 & RER=0 → butuh map[keccak(MER_L1,0)] = 0x16ef... ≠ 0
+
+deposit L2 forceUpdate TERAKHIR menghasilkan mainnet=root_pohon_L2=0x335e...
+→ map berisi keccak(0x335e..., 0) — bukan hash kita
+
+=== SOLUSI: KLAIM PAKAI MER YANG SUDAH DI MAP ===
+map berisi: keccak(0x335e4f...(root L2 3-leaf), 0)
+hash: 0xea2764d759b2019273078774b37fea54017a33a7588edd0b0b5ec818fbb79bb5
+map: 35928318284616727740016655410872005437938992353012995372027192157181160630751 [3.592e76]
+
+→ tapi MER=0x335e = root pohon L2 — klaim mainnet-flag verify proof thd MER...
+  SOURCE [2] di atas menentukan: apakah proof verify thd MER dari calldata, atau cross-check

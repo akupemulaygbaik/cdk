@@ -1,0 +1,36 @@
+═══ [1] precompute bridge FINAL (nonce bersih; 5 tx ke depan) ═══════
+null
+BRIDGE_FUTURE=0x4c5859f0F772848b2D91F1D83E2Fe57935348029 (tx: GER impl, GER proxy, BR impl, BR proxy = +4... tunggu, era-old TANPA initialize → proxy tanpa data → 4 tx total: GER impl(0) GER proxy(1) BR impl(2) BR proxy(3))
+
+═══ [2] era-old GER impl — constructor (BRIDGE_FUTURE) ═══════
+GER_NEW_IMPL=0x9d4454b023096f34b160d6b654540c56a1f81688
+wiring bridge: 0x4c5859f0F772848b2D91F1D83E2Fe57935348029 — harus 0x4c5859f0F772848b2D91F1D83E2Fe57935348029
+
+═══ [3] era-old GER proxy (TANPA init — immutable wiring di constructor impl) ═══════
+GER_NEW_PROXY=0x5eb3bc0a489c5a8288765d2336659ebca68fcd00 — code: 0x608060405236...
+
+═══ [4] INJEKSI GER (MER_L1, 0) — caller harus bridgeAddress... ═══════
+Solusi production-path: bridge final deposit forceUpdate → bridge internal call
+updateExitRoot(mainnet_root_pohon_L2) — bukan insertGlobalExitRoot.
+insertGlobalExitRoot adalah jalur AggOracle — era-old GER MENERIMA keduanya?
+41:    function updateExitRoot(bytes32 newRoot) external {
+42-        if (msg.sender != bridgeAddress) {
+43-            revert OnlyAllowedContracts();
+44-        }
+45-
+46-        lastRollupExitRoot = newRoot;
+47-    }
+48-}
+
+═══ [5] bridge impl + proxy FINAL (wiring GER_NEW_PROXY) ═══════
+BR_IMPL=0x36c02da8a0983159322a80ffe9f24b1acff8b570
+BR_FINAL=0x809d550fca64d94bd9f66e60752a544199cfac3d
+BEDA — wiring yang penting
+wiring: netID=0 GER=0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00
+
+═══ [6] deposit L2 via bridge FINAL forceUpdate=TRUE → bridge internal call ke GER (msg.sender=BRIDGE_FUTURE ✓) ═══════
+deposit: {"status":"0x0","gasUsed":"0x1cd32"}
+
+═══ [7] MAP CHECK — GER L1 hash target ═══════
+map (MER_L1,0): 0
+GER L2 root pohon L2: Error: server returned an error response: error code -32000: execution reverted

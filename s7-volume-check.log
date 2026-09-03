@@ -1,0 +1,18 @@
+═══ [1] volume yang tersisa ═══════
+local     cdk-data
+local     cdk_l1-data
+local     cdk_l2-data
+
+═══ [2] SEMUA container ═══════
+
+═══ [3] isi volume L2 (kalau ada) ═══════
+000004.sst
+000005.log
+000008.log
+849.6M	/data
+
+═══ [4] isi volume L1 ═══════
+000004.sst
+000005.log
+000008.log
+849.5M	/data
